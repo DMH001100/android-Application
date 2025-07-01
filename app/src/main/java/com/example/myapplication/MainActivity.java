@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -39,7 +40,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 
 public class MainActivity extends AppCompatActivity {
-    private BluetoothAdapter bluetoothAdapter; // 本地蓝牙适配器
+    private BluetoothAdapter bluetoothAdapter; // 本地蓝牙适配器、
     private BluetoothDevice targetDevice;
     private BluetoothSocket bluetoothSocket;  // 蓝牙通信Socket
     private OutputStream outputStream;  // 数据输出流
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private volatile boolean isRunning = false;
     private Thread controlThread;
     private Future<?> movementTask; // 线程池？用于控制任务执行
+    private static OutputStream staticOutputStream; // 静态输出流
 
     private static final byte[] CMD_FORWARD1 = {(byte)0xA5, 0x01, 0x01, (byte)0x5A}; //前进
     private static final byte[] CMD_FORWARD2 = {(byte)0xA5, 0x02, 0x02, (byte)0x5A};
@@ -73,6 +75,27 @@ public class MainActivity extends AppCompatActivity {
         setupScanComponents();// 初始化扫描相关组件
         setupDeviceSelection(); // 配置设备选择事件
         setupButtons();// 设置控制按钮事件
+
+        //跳转到机械臂控制页面的按钮
+        Button btnArmControl = findViewById(R.id.btnArmControl);
+        btnArmControl.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ArmControlActivity.class);
+            startActivity(intent);
+        });
+
+        //指令控制跳转界面的按钮
+        Button btnArmManualControl = findViewById(R.id.btnArmManualControl);
+        btnArmManualControl.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ArmManualControlActivity.class);
+            startActivity(intent);
+        });
+
+        //指令控制跳转界面的按钮
+        Button btnArmGroupControl = findViewById(R.id.btnArmGroupControl);
+        btnArmGroupControl.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ArmGroupActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void requestNecessaryPermissions() { // 请求必要的运行时权限
@@ -126,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
                 bluetoothSocket.connect();
                 outputStream = bluetoothSocket.getOutputStream();
+                staticOutputStream = outputStream; // 设置静态引用
 
                 runOnUiThread(() -> {
                     Toast.makeText(this, "已连接：" + device.getName(), Toast.LENGTH_SHORT).show();
@@ -138,6 +162,16 @@ public class MainActivity extends AppCompatActivity {
                 closeSocket();
             }
         }).start();
+    }
+
+    public static void sendCommandToDevice(byte[] data) {
+        try {
+            if (staticOutputStream != null) {
+                staticOutputStream.write(data);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void closeSocket() { //关闭蓝牙Socket连接
@@ -356,6 +390,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        staticOutputStream = null; // 清除静态引用
         if (discoveryReceiver != null) {
             unregisterReceiver(discoveryReceiver);
         }

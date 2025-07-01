@@ -98,6 +98,7 @@
                     android:layout_marginVertical="8dp"
                     android:text="后退" />
             </LinearLayout>
+
         </com.google.android.material.card.MaterialCardView>
 
         <Switch
@@ -136,6 +137,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="控制Demo, 使用前请确认手机蓝牙功能已经打开\n点击扫描设备展开兰塔设备列表，找到目标设备点一下等待几秒，连接成功后会提示连接成功" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnArmControl"
+                android:layout_width="122dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="切换到机械臂控制" />
+
+            <Button
+                android:id="@+id/btnArmManualControl"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="机械臂指令控制" />
+
+            <Button
+                android:id="@+id/btnArmGroupControl"
+                android:layout_width="116dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="机械臂动作组" />
+
+        </LinearLayout>
     </LinearLayout>
 
 

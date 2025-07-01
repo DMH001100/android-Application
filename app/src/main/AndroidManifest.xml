@@ -20,6 +20,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 机械臂控制Activity -->
+        <activity
+            android:name=".ArmControlActivity"
+            android:label="机械臂控制"
+            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".ArmManualControlActivity"
+            android:label="机械臂指令控制"
+            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".ArmGroupActivity"
+            android:label="机械臂指令控制"
+            android:parentActivityName=".MainActivity"/>
+
     </application>
 
     <uses-permission android:name="android.permission.BLUETOOTH"/>
